@@ -1,9 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 const sequelize = require('./config/db');
 const routes = require('./routes');
-require('dotenv').config();
+const morgan = require('morgan');
 
 const app = express();
+app.use(morgan('tiny'));
 
 app.use(express.json());
 app.use('/api', routes);
