@@ -1,15 +1,19 @@
 const express = require('express');
+const sequelize = require('./config/db');
+const routes = require('./routes');
+require('dotenv').config();
+
 const app = express();
-const port = 3000;
 
 app.use(express.json());
+app.use('/api', routes);
 
-let users = [];
+const PORT = process.env.PORT || 3333;
 
-app.get('/users', (req, res) => res.json(users));
-app.post('/users', (req, res) => {
-  users.push(req.body);
-  res.status(201).json(req.body);
+sequelize.sync().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}).catch(err => {
+  console.error('Unable to connect to the database:', err);
 });
-
-app.listen(port, () => console.log(`API running on http://localhost:${port}`));
