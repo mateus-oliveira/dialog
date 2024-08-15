@@ -16,6 +16,11 @@
     "sharp": "^0.33.4"
   },
   "scripts": {
-    "start": "fuser -k 3333/tcp && node index.js"
+    "start": "fuser -k 3333/tcp && node index.js",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   }
 }
