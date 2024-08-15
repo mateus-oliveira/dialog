@@ -21,20 +21,32 @@ exports.createPost = async (req, res) => {
 
 exports.getPosts = async (req, res) => {
   try {
-    const cacheKey = redisConsts.POSTS_CACHE_KEY;
-    const cachedPosts = await redisClient.get(cacheKey);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+    const cacheKey = `${redisConsts.POSTS_CACHE_KEY}_${page}`;
 
+    const cachedPosts = await redisClient.get(cacheKey);
+    
     if (cachedPosts) {
       return res.status(status.HTTP_200_OK).json(JSON.parse(cachedPosts));
     }
 
-    const posts = await Post.findAll({
-      include: [{ model: User, attributes: ['id', 'name', 'email'] }]
+    const { count, rows: posts } = await Post.findAndCountAll({
+      include: [{ model: User, attributes: ['id', 'name', 'email'] }],
+      limit, offset
     });
 
-    await redisClient.set(cacheKey, JSON.stringify(posts), {EX: redisConsts.EXPIRATION});
+    const response = {
+      totalPosts: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      posts
+    };
 
-    res.status(status.HTTP_200_OK).json(posts);
+    await redisClient.set(cacheKey, JSON.stringify(response), {EX: redisConsts.EXPIRATION});
+
+    res.status(status.HTTP_200_OK).json(response);
   } catch (err) {
     res.status(status.HTTP_400_BAD_REQUEST).json({ error: err.message });
   }
