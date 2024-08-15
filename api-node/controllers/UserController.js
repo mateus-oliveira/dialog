@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const status = require('../constants/httpStatus')
+const status = require('../constants/httpStatus');
 const User = require('../models/User');
 
 
@@ -27,7 +27,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return res.status(status.HTTP_200_OK).json({ token });
   } catch (err) {
-    return res.status(status.HTTP_400_BAD_REQUEST).json({ error: err.message });
+    return res.status(status.HTTP_500_INTERNAL_SERVER_ERROR).json({ error: err.message });
   }
 };
 
