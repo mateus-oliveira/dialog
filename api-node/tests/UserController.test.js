@@ -1,4 +1,4 @@
-const { register, login, getUser } = require('../controllers/UserController');
+const UserController = require('../controllers/UserController');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
@@ -34,7 +34,7 @@ describe('User Controller', () => {
       bcrypt.hash.mockResolvedValue(hashedPassword);
       User.create.mockResolvedValue(createdUser);
 
-      await register(req, res);
+      await UserController.register(req, res);
 
       expect(bcrypt.hash).toHaveBeenCalledWith(userData.password, 10);
       expect(User.create).toHaveBeenCalledWith({ name: userData.name, email: userData.email, password: hashedPassword });
@@ -49,7 +49,7 @@ describe('User Controller', () => {
       bcrypt.hash.mockResolvedValue('hashedPassword');
       User.create.mockRejectedValue(new Error(errorMessage));
 
-      await register(req, res);
+      await UserController.register(req, res);
 
       expect(res.status).toHaveBeenCalledWith(status.HTTP_400_BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ error: errorMessage });
@@ -67,7 +67,7 @@ describe('User Controller', () => {
       const token = 'jwtToken';
       jwt.sign.mockReturnValue(token);
 
-      await login(req, res);
+      await UserController.login(req, res);
 
       expect(User.findOne).toHaveBeenCalledWith({ where: { email: userData.email } });
       expect(bcrypt.compare).toHaveBeenCalledWith(req.body.password, userData.password);
@@ -81,7 +81,7 @@ describe('User Controller', () => {
       User.findOne.mockResolvedValue({ email: 'john@example.com', password: 'hashedPassword' });
       bcrypt.compare.mockResolvedValue(false);
 
-      await login(req, res);
+      await UserController.login(req, res);
 
       expect(res.status).toHaveBeenCalledWith(status.HTTP_401_UNAUTHORIZED);
       expect(res.json).toHaveBeenCalledWith({ error: 'Invalid credentials' });
@@ -91,7 +91,7 @@ describe('User Controller', () => {
       req.body = { email: 'john@example.com', password: 'password' };
       User.findOne.mockResolvedValue(null);
 
-      await login(req, res);
+      await UserController.login(req, res);
 
       expect(res.status).toHaveBeenCalledWith(status.HTTP_401_UNAUTHORIZED);
       expect(res.json).toHaveBeenCalledWith({ error: 'Invalid credentials' });
@@ -103,13 +103,13 @@ describe('User Controller', () => {
 
       User.findOne.mockRejectedValue(new Error(errorMessage));
 
-      await login(req, res);
+      await UserController.login(req, res);
 
       expect(res.status).toHaveBeenCalledWith(status.HTTP_500_INTERNAL_SERVER_ERROR);
       expect(res.json).toHaveBeenCalledWith({ error: errorMessage });
     });
   });
-  
+
 
   describe('getUser', () => {
     it('should return user data if found', async () => {
@@ -117,7 +117,7 @@ describe('User Controller', () => {
       req.params.id = 1;
       User.findByPk.mockResolvedValue(userData);
 
-      await getUser(req, res);
+      await UserController.getUser(req, res);
 
       expect(User.findByPk).toHaveBeenCalledWith(req.params.id);
       expect(res.status).toHaveBeenCalledWith(status.HTTP_200_OK);
@@ -128,7 +128,7 @@ describe('User Controller', () => {
       req.params.id = 1;
       User.findByPk.mockResolvedValue(null);
 
-      await getUser(req, res);
+      await UserController.getUser(req, res);
 
       expect(res.status).toHaveBeenCalledWith(status.HTTP_404_NOT_FOUND);
       expect(res.json).toHaveBeenCalledWith({ error: 'User not found' });
@@ -140,7 +140,7 @@ describe('User Controller', () => {
 
       User.findByPk.mockRejectedValue(new Error(errorMessage));
 
-      await getUser(req, res);
+      await UserController.getUser(req, res);
 
       expect(res.status).toHaveBeenCalledWith(status.HTTP_400_BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ error: errorMessage });
