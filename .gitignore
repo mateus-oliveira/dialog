@@ -48,3 +48,5 @@ microservices-go/bin/
 microservices-go/pkg/
 api-go/bin/
 api-go/pkg/
+api-node/uploads/*
+!api-node/uploads/.gitkeep

@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const httpStatus = require('../constants/httpStatus')
+const status = require('../constants/httpStatus')
 const User = require('../models/User');
 
 
@@ -10,9 +10,9 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hashedPassword });
     user.password = undefined;
-    return res.status(httpStatus.HTTP_201_CREATED).json(user);
+    return res.status(status.HTTP_201_CREATED).json(user);
   } catch (err) {
-    return res.status(httpStatus.HTTP_400_BAD_REQUEST).json({ error: err.message });
+    return res.status(status.HTTP_400_BAD_REQUEST).json({ error: err.message });
   }
 };
 
@@ -22,12 +22,12 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
     if (!user || !await bcrypt.compare(password, user.password)) {
-      return res.status(httpStatus.HTTP_401_UNAUTHORIZED).json({ error: 'Invalid credentials' });
+      return res.status(status.HTTP_401_UNAUTHORIZED).json({ error: 'Invalid credentials' });
     }
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+    return res.status(status.HTTP_200_OK).json({ token });
   } catch (err) {
-    res.status(httpStatus.HTTP_400_BAD_REQUEST).json({ error: err.message });
+    return res.status(status.HTTP_400_BAD_REQUEST).json({ error: err.message });
   }
 };
 
@@ -36,11 +36,10 @@ exports.getUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) {
-      return res.status(httpStatus.HTTP_404_NOT_FOUND).json({ error: 'User not found' });
+      return res.status(status.HTTP_404_NOT_FOUND).json({ error: 'User not found' });
     }
-    res.json(user);
+    return res.status(status.HTTP_200_OK).json(user);
   } catch (err) {
-    res.status(httpStatus.HTTP_400_BAD_REQUEST).json({ error: err.message });
+    return res.status(status.HTTP_400_BAD_REQUEST).json({ error: err.message });
   }
 };
-
