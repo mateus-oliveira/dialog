@@ -42,8 +42,8 @@ describe('Like Controller', () => {
       req.body.postId = 1;
       const likeData = { id: 1, postId: req.body.postId, userId: req.user.id };
       
-      Like.findOne.mockResolvedValue(null); // Simula que não existe like
-      Like.create.mockResolvedValue(likeData); // Simula a criação do like
+      Like.findOne.mockResolvedValue(null);
+      Like.create.mockResolvedValue(likeData);
 
       await LikeController.toggleLike(req, res);
 
@@ -57,12 +57,12 @@ describe('Like Controller', () => {
       req.body.postId = 1;
       const existingLike = { destroy: jest.fn() };
 
-      Like.findOne.mockResolvedValue(existingLike); // Simula que existe um like
+      Like.findOne.mockResolvedValue(existingLike);
 
       await LikeController.toggleLike(req, res);
 
       expect(Like.findOne).toHaveBeenCalledWith({ where: { postId: req.body.postId, userId: req.user.id } });
-      expect(existingLike.destroy).toHaveBeenCalled(); // Verifica se o like foi removido
+      expect(existingLike.destroy).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(status.HTTP_200_OK);
       expect(res.json).toHaveBeenCalledWith({ message: 'Like removed' });
     });
@@ -71,7 +71,7 @@ describe('Like Controller', () => {
       const errorMessage = 'Error toggling like';
       req.body.postId = 1;
 
-      Like.findOne.mockRejectedValue(new Error(errorMessage)); // Simula erro ao buscar o like
+      Like.findOne.mockRejectedValue(new Error(errorMessage));
 
       await LikeController.toggleLike(req, res);
 
@@ -85,7 +85,7 @@ describe('Like Controller', () => {
       req.params.postId = '1';
       const cachedLikes = JSON.stringify([{ id: 1, userId: 1 }]);
 
-      redisClient.get.mockResolvedValue(cachedLikes); // Simula que existem likes em cache
+      redisClient.get.mockResolvedValue(cachedLikes);
 
       await LikeController.getLikesByPost(req, res);
 
@@ -97,8 +97,8 @@ describe('Like Controller', () => {
     it('should return likes from the database and cache them if not cached', async () => {
       req.params.postId = '1';
       const likes = [{ id: 1, userId: 1 }];
-      redisClient.get.mockResolvedValue(null); // Simula que não existem likes em cache
-      Like.findAll.mockResolvedValue(likes); // Simula a busca dos likes
+      redisClient.get.mockResolvedValue(null);
+      Like.findAll.mockResolvedValue(likes);
 
       await LikeController.getLikesByPost(req, res);
 
@@ -117,7 +117,7 @@ describe('Like Controller', () => {
       req.params.postId = '1';
 
       redisClient.get.mockResolvedValue(null);
-      Like.findAll.mockRejectedValue(new Error(errorMessage)); // Simula erro ao buscar os likes
+      Like.findAll.mockRejectedValue(new Error(errorMessage));
 
       await LikeController.getLikesByPost(req, res);
 
