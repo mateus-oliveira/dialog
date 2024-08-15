@@ -11,7 +11,8 @@ npm install --save
 cp .env.example .env
 ```
 
-Altere o arquivo `.env` com os valores para todas as variáveis relacionadas ao banco de dados, bem como `JWT_SECRET`.
+Altere o arquivo `.env` com os valores para todas as variáveis relacionadas ao banco de dados e ao Redis, bem como a variável `JWT_SECRET`.
+
 Então crie o conatainer para o banco de dados PostgreSQL com o seguinte comando:
 
 ```bash

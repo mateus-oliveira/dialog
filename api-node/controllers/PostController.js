@@ -1,6 +1,9 @@
 const path = require('path');
+const redisClient = require('../config/redis');
+const redisConsts = require('../constants/redisConsts');
 const status = require('../constants/httpStatus');
 const Post = require('../models/Post');
+const User = require('../models/User');
 
 
 exports.createPost = async (req, res) => {
@@ -18,7 +21,19 @@ exports.createPost = async (req, res) => {
 
 exports.getPosts = async (req, res) => {
   try {
-    const posts = await Post.findAll({ include: ['user'] });
+    const cacheKey = redisConsts.POSTS_CACHE_KEY;
+    const cachedPosts = await redisClient.get(cacheKey);
+
+    if (cachedPosts) {
+      return res.status(status.HTTP_200_OK).json(JSON.parse(cachedPosts));
+    }
+
+    const posts = await Post.findAll({
+      include: [{ model: User, attributes: ['id', 'name', 'email'] }]
+    });
+
+    await redisClient.set(cacheKey, JSON.stringify(posts), {EX: redisConsts.EXPIRATION});
+
     res.status(status.HTTP_200_OK).json(posts);
   } catch (err) {
     res.status(status.HTTP_400_BAD_REQUEST).json({ error: err.message });
