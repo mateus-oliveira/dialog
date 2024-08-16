@@ -25,7 +25,8 @@ exports.login = async (req, res) => {
       return res.status(status.HTTP_401_UNAUTHORIZED).json({ error: 'Invalid credentials' });
     }
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    return res.status(status.HTTP_200_OK).json({ token });
+    user.password = undefined;
+    return res.status(status.HTTP_200_OK).json({ token, user });
   } catch (err) {
     return res.status(status.HTTP_500_INTERNAL_SERVER_ERROR).json({ error: err.message });
   }

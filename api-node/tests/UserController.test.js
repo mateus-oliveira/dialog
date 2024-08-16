@@ -59,7 +59,8 @@ describe('User Controller', () => {
 
   describe('login', () => {
     it('should login a user and return a token', async () => {
-      const userData = { id: 1, email: 'john@example.com', password: 'hashedPassword' };
+      const password = 'hashedPassword';
+      const userData = { id: 1, email: 'john@example.com', password };
       req.body = { email: userData.email, password: 'password' };
       
       User.findOne.mockResolvedValue(userData);
@@ -70,10 +71,10 @@ describe('User Controller', () => {
       await UserController.login(req, res);
 
       expect(User.findOne).toHaveBeenCalledWith({ where: { email: userData.email } });
-      expect(bcrypt.compare).toHaveBeenCalledWith(req.body.password, userData.password);
+      expect(bcrypt.compare).toHaveBeenCalledWith(req.body.password, password);
       expect(jwt.sign).toHaveBeenCalledWith({ userId: userData.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
       expect(res.status).toHaveBeenCalledWith(status.HTTP_200_OK);
-      expect(res.json).toHaveBeenCalledWith({ token });
+      expect(res.json).toHaveBeenCalledWith({ token, user: userData });
     });
 
     it('should return an error for invalid credentials', async () => {
