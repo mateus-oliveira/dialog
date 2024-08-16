@@ -30,6 +30,12 @@ Após criado o container, basta iniciar o serviço da API com o comando:
 npm start
 ```
 
+Para executar os testes unitários, execute:
+
+```bash
+npm test
+```
+
 Todos os endpoints estão documentados no arquivo [endpoints.json](./api-node/endpoints.json).
 
 Baixe e instale o Cliente HTTP [Insmonia](https://insomnia.rest/download) e então importe o arquivo `endpoints.json` para acessar os endpoints da API. 
