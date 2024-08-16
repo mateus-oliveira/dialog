@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import api from '@/utils/api';
 import { API_POSTS } from '@/constants/routes';
 import PostModal from '@/app/components/PostModal';
+import Header from '@/app/components/Header';
 
 interface Post {
   id: number;
@@ -69,6 +70,7 @@ const Feed = () => {
 
   return (
     <div className="p-4">
+      <Header />
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {posts.map(post => (
           <div
@@ -85,7 +87,7 @@ const Feed = () => {
         ))}
       </div>
 
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-between items-center mt-10">
         <button
           onClick={handlePreviousPage}
           disabled={page === 1}

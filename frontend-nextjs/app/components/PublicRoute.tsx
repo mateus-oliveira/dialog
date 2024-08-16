@@ -8,7 +8,7 @@ const PublicRoute = ({children}) => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            window.location = FEED;
+            window.location.href = FEED;
         }
     }, [isAuthenticated]);
 

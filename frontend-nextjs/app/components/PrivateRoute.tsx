@@ -7,7 +7,7 @@ const PrivateRoute = ({children}) => {
 
     useEffect(() => {
         if (!isAuthenticated) {
-            window.location = LOGIN;
+            window.location.href = LOGIN;
         }
     }, [isAuthenticated]);
 

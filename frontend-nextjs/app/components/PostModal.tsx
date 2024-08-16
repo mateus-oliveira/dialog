@@ -5,7 +5,7 @@ import api from '@/utils/api';
 import { API_COMMENTS, API_LIKES, API_POSTS } from '@/constants/routes';
 import getUser from '@/utils/getUser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart as faHeartSolid, faHeart as faHeartRegular } from '@fortawesome/free-solid-svg-icons';
+import { faHeart } from '@fortawesome/free-solid-svg-icons';
 
 interface Comment {
   id: number;
@@ -123,10 +123,10 @@ const PostModal = ({ post, onClose }: PostModalProps) => {
             <p className="mt-2">{post.caption}</p>
             <button
               onClick={handleLike}
-              className="text-red-500 mt-4 flex items-center"
+              className={`${hasLiked ? 'text-red-500' : 'text-grey-100'} mt-4 flex items-center`}
             >
-              <FontAwesomeIcon icon={hasLiked ? faHeartSolid : faHeartRegular} className="mr-2" />
-              Curtir ({likes})
+              <FontAwesomeIcon icon={faHeart} className="mr-2"/>
+              ({likes})
             </button>
             <div className="mt-4">
               <input
