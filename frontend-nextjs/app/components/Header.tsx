@@ -11,8 +11,8 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    localStorage.setItem(TOKEN, '');
-    localStorage.setItem(USER, {});
+    localStorage.removeItem(TOKEN);
+    localStorage.removeItem(USER);
     router.push(LOGIN);
   };
 
