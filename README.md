@@ -3,10 +3,7 @@
 
 ## Demonstração
 
-<video width="320" height="240" controls>
-  <source src="./demo.webm" type="video/webm">
-  Your browser does not support the video tag.
-</video>
+[Assista ao vídeo](https://youtu.be/KgCvNpGIuwg)
 
 
 ## Api Node
