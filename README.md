@@ -54,6 +54,7 @@ Para executar o frontend, utilize Node v20 LTS e então execute os seguintes com
 ```bash
 cd frontend-nextjs
 npm install --save
+cp .env.example .env
 npm run dev
 ```
 
