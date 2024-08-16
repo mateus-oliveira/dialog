@@ -1,22 +1,19 @@
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import {LOGIN} from "../../constants/routes";
 import isUserAuthenticated from "../../utils/isUserAuthenticated";
 
 const PrivateRoute = ({children}) => {
-    const { push } = useRouter();
     const isAuthenticated = isUserAuthenticated();
 
     useEffect(() => {
         if (!isAuthenticated) {
-            push(LOGIN)
+            window.location = LOGIN;
         }
-    }, [isAuthenticated, push]);
+    }, [isAuthenticated]);
 
     return (
         <>
-            {isAuthenticated && children}
-            {!isAuthenticated && null}
+            {isAuthenticated ? children : null}
         </>
     )
 }

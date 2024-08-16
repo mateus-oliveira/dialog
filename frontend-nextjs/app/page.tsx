@@ -1,19 +1,16 @@
 "use client";
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect } from "react";
 import { FEED } from '@/constants/routes';
 
-const HomePage = () => {
-  const router = useRouter();
-  router.push(FEED);
-  return (
-    <div className="flex">
-      <div className="main-content">
-        Loading...
-      </div>
-    </div>
-  );
+const Index = () => {
+
+  useEffect(() => {
+    window.location = FEED;
+  }, []);
+
+  return <>Loading...</>;
 };
 
-export default HomePage;
+export default Index;

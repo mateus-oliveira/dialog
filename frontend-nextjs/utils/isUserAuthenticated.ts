@@ -1,6 +1,12 @@
-const isUserAuthenticated = () => {
-    // TODO - function to check authentication
-    return true;
-}
+import { TOKEN } from "@/constants/storage";
+
+export const isUserAuthenticated = (): boolean => {
+    if (typeof window !== 'undefined') {
+        const token = localStorage.getItem(TOKEN);
+        return !!token;
+    };
+
+    return false;
+};
 
 export default isUserAuthenticated;

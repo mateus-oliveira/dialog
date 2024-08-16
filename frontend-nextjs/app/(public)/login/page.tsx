@@ -2,18 +2,27 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FEED } from '../../../constants/routes';
+import swal from 'sweetalert';
+import { API_LOGIN, FEED } from '@/constants/routes';
+import api from '@/utils/api';
+import { TOKEN } from '@/constants/storage';
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aqui você deve fazer a chamada para sua API para autenticação
-    // Supondo que o login foi bem-sucedido:
-    router.push(FEED);
+    
+    await api.post(API_LOGIN, {email, password})
+      .then((response: any) => {
+        swal("Successo!", "Bem-vind@ à Dialog", "success");
+        localStorage.setItem(TOKEN, response.token);
+        router.push(FEED);
+      })
+      .catch (() => swal("Ops!", "Você submeteu suas credenciais corretamente?", "error"));
   };
 
   return (
