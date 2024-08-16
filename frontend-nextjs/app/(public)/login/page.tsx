@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
 import { API_LOGIN, FEED } from '@/constants/routes';
 import api from '@/utils/api';
-import { TOKEN } from '@/constants/storage';
+import { TOKEN, USER } from '@/constants/storage';
 
 
 const Login = () => {
@@ -20,6 +20,7 @@ const Login = () => {
       .then((response: any) => {
         swal("Successo!", "Bem-vind@ à Dialog", "success");
         localStorage.setItem(TOKEN, response.token);
+        localStorage.setItem(USER, JSON.stringify(response.user));
         router.push(FEED);
       })
       .catch (() => swal("Ops!", "Você submeteu suas credenciais corretamente?", "error"));

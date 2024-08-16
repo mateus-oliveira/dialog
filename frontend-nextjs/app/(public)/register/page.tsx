@@ -4,7 +4,7 @@ const Register = () => {
     return (
         <div className="flex">
             <div className="main-content">
-              Register
+              <h1>Register</h1>
             </div>
         </div>
     );

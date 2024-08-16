@@ -7,6 +7,8 @@ export const REGISTER = '/register';
 export const API_LOGIN = '/login';
 export const API_REGISTER = '/register';
 export const API_POSTS = '/posts';
+export const API_COMMENTS = '/comments';
+export const API_LIKES = '/likes';
 
 
 export default {

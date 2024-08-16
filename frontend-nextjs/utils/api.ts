@@ -25,6 +25,10 @@ const api = {
   
         if (!response.ok) {
           const errorDetails = await response.json();
+          if (response.status === 401 || response.status === 403) {
+            localStorage.setItem(TOKEN, '');
+            window.location = LOGIN;
+          };
           throw new Error(`Erro na requisição: ${response.statusText} - ${errorDetails.message}`);
         }
 
