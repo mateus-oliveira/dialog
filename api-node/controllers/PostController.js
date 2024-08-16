@@ -12,6 +12,27 @@ exports.createPost = async (req, res) => {
     const imageUrl = path.join('uploads', req.file.filename);
 
     const post = await Post.create({ caption, imageUrl, userId: req.user.id });
+
+    const newPost = await Post.findOne({
+      where: { id: post.id },
+      include: [{ model: User, attributes: ['id', 'name', 'email'] }],
+    });
+
+    // Add new post to cache
+    const cacheKey = `${redisConsts.POSTS_CACHE_KEY}_1`;
+    const cachedPosts = await redisClient.get(cacheKey);
+
+    if (cachedPosts) {
+      const cachedData = JSON.parse(cachedPosts);
+      cachedData.posts.unshift(newPost);
+      cachedData.totalPosts += 1;
+
+      const limit = parseInt(req.query.limit) || 10;
+      cachedData.totalPages = Math.ceil(cachedData.totalPosts / limit);
+
+      await redisClient.set(cacheKey, JSON.stringify(cachedData), {EX: redisConsts.EXPIRATION});
+    }
+
     res.status(status.HTTP_201_CREATED).json(post);
   } catch (err) {
     res.status(status.HTTP_400_BAD_REQUEST).json({ error: err.message });

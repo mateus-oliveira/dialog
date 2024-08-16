@@ -1,6 +1,4 @@
 const status = require('../constants/httpStatus');
-const redisClient = require('../config/redis');
-const redisConsts = require('../constants/redisConsts');
 const Comment = require('../models/Comment');
 const User = require('../models/User');
 
@@ -20,13 +18,6 @@ exports.getCommentsByPost = async (req, res) => {
     try {
       const { postId } = req.params;
   
-      const cacheKey = `${redisConsts.COMMENTS_CACHE_KEY}_${postId}`;
-      const cachedComments = await redisClient.get(cacheKey);
-  
-      /*if (cachedComments) {
-        return res.status(status.HTTP_200_OK).json(JSON.parse(cachedComments));
-      }*/
-  
       const comments = await Comment.findAll({
         where: { postId },
         include: [{
@@ -34,8 +25,6 @@ exports.getCommentsByPost = async (req, res) => {
           attributes: ['id', 'name', 'email']
         }]
       });
-  
-      await redisClient.set(cacheKey, JSON.stringify(comments), {EX: redisConsts.EXPIRATION});
   
       res.status(status.HTTP_200_OK).json(comments);
     } catch (err) {

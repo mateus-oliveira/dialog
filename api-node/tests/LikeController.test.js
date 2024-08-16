@@ -81,19 +81,6 @@ describe('Like Controller', () => {
   });
 
   describe('getLikesByPost', () => {
-    it('should return cached likes if available', async () => {
-      req.params.postId = '1';
-      const cachedLikes = JSON.stringify([{ id: 1, userId: 1 }]);
-
-      redisClient.get.mockResolvedValue(cachedLikes);
-
-      await LikeController.getLikesByPost(req, res);
-
-      expect(redisClient.get).toHaveBeenCalledWith(`${redisConsts.LIKES_CACHE_KEY}_1`);
-      expect(res.status).toHaveBeenCalledWith(status.HTTP_200_OK);
-      expect(res.json).toHaveBeenCalledWith(JSON.parse(cachedLikes));
-    });
-
     it('should return likes from the database and cache them if not cached', async () => {
       req.params.postId = '1';
       const likes = [{ id: 1, userId: 1 }];
@@ -102,12 +89,10 @@ describe('Like Controller', () => {
 
       await LikeController.getLikesByPost(req, res);
 
-      expect(redisClient.get).toHaveBeenCalledWith(`${redisConsts.LIKES_CACHE_KEY}_1`);
       expect(Like.findAll).toHaveBeenCalledWith({
         where: { postId: req.params.postId },
         include: [{ model: User, attributes: ['id', 'name', 'email'] }],
       });
-      expect(redisClient.set).toHaveBeenCalledWith(`${redisConsts.LIKES_CACHE_KEY}_1`, JSON.stringify(likes), { EX: redisConsts.EXPIRATION });
       expect(res.status).toHaveBeenCalledWith(status.HTTP_200_OK);
       expect(res.json).toHaveBeenCalledWith(likes);
     });

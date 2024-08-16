@@ -1,6 +1,4 @@
 const status = require('../constants/httpStatus');
-const redisClient = require('../config/redis');
-const redisConsts = require('../constants/redisConsts');
 const Like = require('../models/Like');
 const User = require('../models/User');
 
@@ -27,13 +25,6 @@ exports.getLikesByPost = async (req, res) => {
   try {
     const { postId } = req.params;
 
-    const cacheKey = `${redisConsts.LIKES_CACHE_KEY}_${postId}`;
-    const cachedLikes = await redisClient.get(cacheKey);
-
-    /*if (cachedLikes) {
-      return res.status(status.HTTP_200_OK).json(JSON.parse(cachedLikes));
-    }*/
-
     const likes = await Like.findAll({
       where: { postId },
       include: [{
@@ -41,8 +32,6 @@ exports.getLikesByPost = async (req, res) => {
         attributes: ['id', 'name', 'email']
       }]
     });
-
-    await redisClient.set(cacheKey, JSON.stringify(likes), {EX: redisConsts.EXPIRATION});
 
     res.status(status.HTTP_200_OK).json(likes);
   } catch (err) {

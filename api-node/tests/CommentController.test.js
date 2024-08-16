@@ -68,18 +68,6 @@ describe('Comment Controller', () => {
 
 
   describe('CommentController.getCommentsByPost', () => {
-    it('should return cached comments if available', async () => {
-      req.params.postId = 1;
-      const cachedComments = JSON.stringify([{ id: 1, content: 'Nice!', postId: 1 }]);
-      redisClient.get.mockResolvedValue(cachedComments);
-
-      await CommentController.getCommentsByPost(req, res);
-
-      expect(redisClient.get).toHaveBeenCalledWith(`${redisConsts.COMMENTS_CACHE_KEY}_1`);
-      expect(res.status).toHaveBeenCalledWith(status.HTTP_200_OK);
-      expect(res.json).toHaveBeenCalledWith(JSON.parse(cachedComments));
-    });
-
     it('should return comments from the database and cache them if not cached', async () => {
       req.params.postId = 1;
       const comments = [{ id: 1, content: 'Nice!', postId: 1 }];
@@ -88,12 +76,10 @@ describe('Comment Controller', () => {
 
       await CommentController.getCommentsByPost(req, res);
 
-      expect(redisClient.get).toHaveBeenCalledWith(`${redisConsts.COMMENTS_CACHE_KEY}_1`);
       expect(Comment.findAll).toHaveBeenCalledWith({
         where: { postId: 1 },
         include: [{ model: User, attributes: ['id', 'name', 'email'] }]
       });
-      expect(redisClient.set).toHaveBeenCalledWith(`${redisConsts.COMMENTS_CACHE_KEY}_1`, JSON.stringify(comments), { EX: redisConsts.EXPIRATION });
       expect(res.status).toHaveBeenCalledWith(status.HTTP_200_OK);
       expect(res.json).toHaveBeenCalledWith(comments);
     });
