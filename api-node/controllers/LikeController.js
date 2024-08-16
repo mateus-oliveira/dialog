@@ -30,9 +30,9 @@ exports.getLikesByPost = async (req, res) => {
     const cacheKey = `${redisConsts.LIKES_CACHE_KEY}_${postId}`;
     const cachedLikes = await redisClient.get(cacheKey);
 
-    if (cachedLikes) {
+    /*if (cachedLikes) {
       return res.status(status.HTTP_200_OK).json(JSON.parse(cachedLikes));
-    }
+    }*/
 
     const likes = await Like.findAll({
       where: { postId },

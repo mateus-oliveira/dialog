@@ -23,9 +23,9 @@ exports.getCommentsByPost = async (req, res) => {
       const cacheKey = `${redisConsts.COMMENTS_CACHE_KEY}_${postId}`;
       const cachedComments = await redisClient.get(cacheKey);
   
-      if (cachedComments) {
+      /*if (cachedComments) {
         return res.status(status.HTTP_200_OK).json(JSON.parse(cachedComments));
-      }
+      }*/
   
       const comments = await Comment.findAll({
         where: { postId },
